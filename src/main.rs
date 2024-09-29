@@ -4,5 +4,5 @@ mod utils;
 fn main() {
     println!("Hello, world!");
     
-    day1::run();
+    let _ = day1::run();
 }
