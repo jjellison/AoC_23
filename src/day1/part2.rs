@@ -3,11 +3,27 @@ use std::io;
 
 
 const INPUT_FILE_PATH: &str = "src/day1/input.txt";
+const TENS_COLUMN: usize = 0;
+const ONES_COLUMN: usize = 1;
 
 pub fn run() -> io::Result<u32,> {
-    println!("NOT IMPLEMENTED!");
-    let sum = utils::read_lines(INPUT_FILE_PATH);
+    let mut file_lines = utils::read_lines(INPUT_FILE_PATH)?;
 
-
-    Ok(0)
+    let sum = file_lines.by_ref()
+        .filter_map(Result::ok)
+        .map(|valid_line| 
+                utils::convert_strings_to_digits(&valid_line)
+                .fold([None; 2], |mut state, digit| {
+                    state[TENS_COLUMN].get_or_insert(digit);
+                    state[ONES_COLUMN] = Some(digit);
+                    state
+                }))
+        .filter_map(|pair| {
+                pair.iter()
+                    .try_fold(0, |working, digit_or_none|
+                        digit_or_none.map(|digit| (working * 10) + digit))
+        })
+        .sum();
+            
+    Ok(sum)
 }
